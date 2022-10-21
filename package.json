@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/Arsenii400/express-mesto-gha.git"
   },
-  "author": "",
+  "author": "Arsenii Machekhin",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Arsenii400/express-mesto-gha/issues"
