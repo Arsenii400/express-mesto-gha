@@ -12,7 +12,7 @@ module.exports.findUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user) {
-        res.status(200).res.send({ data: user });
+        res.send({ data: user });
       } else {
         res.status(404).send({
           message: '«Пользователь по указанному _id не найден»',
@@ -45,7 +45,7 @@ module.exports.updateUser = (req, res) => {
   }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
-        res.status(200).res.send({ data: user });
+        res.send({ data: user });
       } else {
         res.status(404).send({
           message: '«Пользователь по указанному _id не найден»',
@@ -69,7 +69,7 @@ module.exports.updateAvatar = (req, res) => {
   }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
-        res.status(200).res.send({ data: user });
+        res.send({ data: user });
       } else {
         res.status(404).send({
           message: '«Пользователь по указанному _id не найден»',
