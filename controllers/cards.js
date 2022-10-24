@@ -1,5 +1,5 @@
 const validator = require('validator');
-const Card = require('../models/user');
+const Card = require('../models/card');
 
 module.exports.findCards = (req, res) => {
   Card.find({})
@@ -23,17 +23,23 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCardById = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .then((user) => {
-      if (user) {
-        res.send({ data: user });
-      } else {
-        res.status(404).send({
-          message: '«Пользователь по указанному _id не найден»',
-        });
-      }
-    })
-    .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+  if (validator.isMongoId(req.params.cardId)) {
+    Card.findByIdAndRemove(req.params.cardId)
+      .then((user) => {
+        if (user) {
+          res.send({ data: user });
+        } else {
+          res.status(404).send({
+            message: '«Пользователь по указанному _id не найден»',
+          });
+        }
+      })
+      .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+  } else {
+    res.status(400).send({
+      message: 'Введён некорректный id',
+    });
+  }
 };
 
 module.exports.putLike = (req, res) => {
