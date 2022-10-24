@@ -1,10 +1,15 @@
 const validator = require('validator');
 const User = require('../models/user');
+const {
+  serverErrorCode,
+  incorrectDataErrorCode,
+  notFoundIdErrorCode,
+} = require('../constants');
 
 module.exports.findUsers = (req, res) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({
+    .catch(() => res.status(serverErrorCode).send({
       message: '«На сервере произошла ошибка»',
     }));
 };
@@ -16,16 +21,16 @@ module.exports.findUserById = (req, res) => {
         if (user) {
           res.send({ data: user });
         } else {
-          res.status(404).send({
+          res.status(notFoundIdErrorCode).send({
             message: '«Пользователь по указанному _id не найден»',
           });
         }
       })
-      .catch(() => res.status(500).send({
+      .catch(() => res.status(serverErrorCode).send({
         message: '«На сервере произошла ошибка»',
       }));
   } else {
-    res.status(400).send({
+    res.status(incorrectDataErrorCode).send({
       message: 'Введён некорректный id',
     });
   }
@@ -37,9 +42,9 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: '«Переданы некорректные данные при создании пользователя»' });
+        res.status(incorrectDataErrorCode).send({ message: '«Переданы некорректные данные при создании пользователя»' });
       } else {
-        res.status(500).send({
+        res.status(serverErrorCode).send({
           message: '«На сервере произошла ошибка»',
         });
       }
@@ -54,16 +59,16 @@ module.exports.updateUser = (req, res) => {
       if (user) {
         res.send({ data: user });
       } else {
-        res.status(404).send({
+        res.status(notFoundIdErrorCode).send({
           message: '«Пользователь по указанному _id не найден»',
         });
       }
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: '«Переданы некорректные данные при обновлении профиля»' });
+        res.status(incorrectDataErrorCode).send({ message: '«Переданы некорректные данные при обновлении профиля»' });
       } else {
-        res.status(500).send({
+        res.status(serverErrorCode).send({
           message: '«На сервере произошла ошибка»',
         });
       }
@@ -78,16 +83,16 @@ module.exports.updateAvatar = (req, res) => {
       if (user) {
         res.send({ data: user });
       } else {
-        res.status(404).send({
+        res.status(notFoundIdErrorCode).send({
           message: '«Пользователь по указанному _id не найден»',
         });
       }
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: '«Переданы некорректные данные при обновлении профиля»' });
+        res.status(incorrectDataErrorCode).send({ message: '«Переданы некорректные данные при обновлении профиля»' });
       } else {
-        res.status(500).send({
+        res.status(serverErrorCode).send({
           message: '«На сервере произошла ошибка»',
         });
       }

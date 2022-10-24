@@ -4,7 +4,7 @@
   "description": "Сервер для проекта Место",
   "main": "app.js",
   "scripts": {
-    "lint": "npx eslint",
+    "lint": "npx eslint .",
     "dev": "nodemon app.js",
     "start": "node app.js"
   },
@@ -28,7 +28,6 @@
     "body-parser": "^1.20.1",
     "express": "^4.18.2",
     "mongoose": "^6.6.7",
-    "path": "^0.12.7",
     "validator": "^13.7.0"
   }
 }

@@ -1,10 +1,15 @@
 const validator = require('validator');
 const Card = require('../models/card');
+const {
+  serverErrorCode,
+  incorrectDataErrorCode,
+  notFoundIdErrorCode,
+} = require('../constants');
 
 module.exports.findCards = (req, res) => {
   Card.find({})
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+    .catch(() => res.status(serverErrorCode).send({ message: '«На сервере произошла ошибка»' }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -13,9 +18,9 @@ module.exports.createCard = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: '«Переданы некорректные данные при создании карточки' });
+        res.status(incorrectDataErrorCode).send({ message: '«Переданы некорректные данные при создании карточки' });
       } else {
-        res.status(500).send({
+        res.status(serverErrorCode).send({
           message: '«На сервере произошла ошибка»',
         });
       }
@@ -29,14 +34,14 @@ module.exports.deleteCardById = (req, res) => {
         if (user) {
           res.send({ data: user });
         } else {
-          res.status(404).send({
+          res.status(notFoundIdErrorCode).send({
             message: '«Пользователь по указанному _id не найден»',
           });
         }
       })
-      .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+      .catch(() => res.status(serverErrorCode).send({ message: '«На сервере произошла ошибка»' }));
   } else {
-    res.status(400).send({
+    res.status(incorrectDataErrorCode).send({
       message: 'Введён некорректный id',
     });
   }
@@ -53,14 +58,14 @@ module.exports.putLike = (req, res) => {
         if (user) {
           res.send({ data: user });
         } else {
-          res.status(404).send({
+          res.status(notFoundIdErrorCode).send({
             message: '«Пользователь по указанному _id не найден»',
           });
         }
       })
-      .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+      .catch(() => res.status(serverErrorCode).send({ message: '«На сервере произошла ошибка»' }));
   } else {
-    res.status(400).send({
+    res.status(incorrectDataErrorCode).send({
       message: 'Введён некорректный id',
     });
   }
@@ -77,14 +82,14 @@ module.exports.removeLike = (req, res) => {
         if (user) {
           res.send({ data: user });
         } else {
-          res.status(404).send({
+          res.status(notFoundIdErrorCode).send({
             message: '«Пользователь по указанному _id не найден»',
           });
         }
       })
-      .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+      .catch(() => res.status(serverErrorCode).send({ message: '«На сервере произошла ошибка»' }));
   } else {
-    res.status(400).send({
+    res.status(incorrectDataErrorCode).send({
       message: 'Введён некорректный id',
     });
   }
