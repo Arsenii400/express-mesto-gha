@@ -1,3 +1,4 @@
+const validator = require('validator');
 const User = require('../models/user');
 
 module.exports.findUsers = (req, res) => {
@@ -9,19 +10,25 @@ module.exports.findUsers = (req, res) => {
 };
 
 module.exports.findUserById = (req, res) => {
-  User.findById(req.params.userId)
-    .then((user) => {
-      if (user) {
-        res.send({ data: user });
-      } else {
-        res.status(404).send({
-          message: '«Пользователь по указанному _id не найден»',
-        });
-      }
-    })
-    .catch(() => res.status(500).send({
-      message: '«На сервере произошла ошибка»',
-    }));
+  if (validator.isMongoId(req.params.userId)) {
+    User.findById(req.params.userId)
+      .then((user) => {
+        if (user) {
+          res.send({ data: user });
+        } else {
+          res.status(404).send({
+            message: '«Пользователь по указанному _id не найден»',
+          });
+        }
+      })
+      .catch(() => res.status(500).send({
+        message: '«На сервере произошла ошибка»',
+      }));
+  } else {
+    res.status(400).send({
+      message: 'Введён некорректный id',
+    });
+  }
 };
 
 module.exports.createUser = (req, res) => {

@@ -1,4 +1,5 @@
-const Card = require('../models/card');
+const validator = require('validator');
+const Card = require('../models/user');
 
 module.exports.findCards = (req, res) => {
   Card.find({})
@@ -36,37 +37,49 @@ module.exports.deleteCardById = (req, res) => {
 };
 
 module.exports.putLike = (req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
-    { new: true },
-  )
-    .then((user) => {
-      if (user) {
-        res.send({ data: user });
-      } else {
-        res.status(404).send({
-          message: '«Пользователь по указанному _id не найден»',
-        });
-      }
-    })
-    .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+  if (validator.isMongoId(req.params.cardId)) {
+    Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+      { new: true },
+    )
+      .then((user) => {
+        if (user) {
+          res.send({ data: user });
+        } else {
+          res.status(404).send({
+            message: '«Пользователь по указанному _id не найден»',
+          });
+        }
+      })
+      .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+  } else {
+    res.status(400).send({
+      message: 'Введён некорректный id',
+    });
+  }
 };
 
 module.exports.removeLike = (req, res) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } }, // убрать _id из массива
-    { new: true },
-  )
-    .then((user) => {
-      if (user) {
-        res.send({ data: user });
-      } else {
-        res.status(404).send({
-          message: '«Пользователь по указанному _id не найден»',
-        });
-      }
-    })
-    .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+  if (validator.isMongoId(req.params.cardId)) {
+    Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $pull: { likes: req.user._id } }, // убрать _id из массива
+      { new: true },
+    )
+      .then((user) => {
+        if (user) {
+          res.send({ data: user });
+        } else {
+          res.status(404).send({
+            message: '«Пользователь по указанному _id не найден»',
+          });
+        }
+      })
+      .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+  } else {
+    res.status(400).send({
+      message: 'Введён некорректный id',
+    });
+  }
 };
