@@ -2,7 +2,7 @@ const User = require('../models/user');
 
 module.exports.findUsers = (req, res) => {
   User.find({})
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).res.send({ data: user }))
     .catch((err) => res.status(500).send({
       message: `«На сервере произошла ошибка»: ${err.name}, код ошибки: ${res.statusCode}`,
     }));
@@ -12,7 +12,7 @@ module.exports.findUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user) {
-        res.send({ data: user });
+        res.status(200).res.send({ data: user });
       } else {
         res.status(404).send({
           message: '«Пользователь по указанному _id не найден»',
@@ -27,7 +27,7 @@ module.exports.findUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about } = req.body;
   User.create({ name, about })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: '«Переданы некорректные данные при создании пользователя»' });
@@ -45,7 +45,7 @@ module.exports.updateUser = (req, res) => {
   }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
-        res.send({ data: user });
+        res.status(200).res.send({ data: user });
       } else {
         res.status(404).send({
           message: '«Пользователь по указанному _id не найден»',
@@ -69,7 +69,7 @@ module.exports.updateAvatar = (req, res) => {
   }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
-        res.send({ data: user });
+        res.status(200).res.send({ data: user });
       } else {
         res.status(404).send({
           message: '«Пользователь по указанному _id не найден»',
