@@ -2,9 +2,9 @@ const User = require('../models/user');
 
 module.exports.findUsers = (req, res) => {
   User.find({})
-    .then((user) => res.status(200).res.send({ data: user }))
-    .catch((err) => res.status(500).send({
-      message: `«На сервере произошла ошибка»: ${err.name}, код ошибки: ${res.statusCode}`,
+    .then((user) => res.send({ data: user }))
+    .catch(() => res.status(500).send({
+      message: '«На сервере произошла ошибка»',
     }));
 };
 
