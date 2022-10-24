@@ -25,9 +25,9 @@ module.exports.findUserById = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about } = req.body;
-  User.create({ name, about })
-    .then((user) => res.status(200).res.send({ data: user }))
+  const { name, about, avatar } = req.body;
+  User.create({ name, about, avatar })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: '«Переданы некорректные данные при создании пользователя»' });
