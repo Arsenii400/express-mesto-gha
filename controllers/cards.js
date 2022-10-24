@@ -3,7 +3,7 @@ const Card = require('../models/card');
 module.exports.findCards = (req, res) => {
   Card.find({})
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+    .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -32,7 +32,7 @@ module.exports.deleteCardById = (req, res) => {
         });
       }
     })
-    .catch((err) => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+    .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
 };
 
 module.exports.putLike = (req, res) => {
@@ -50,7 +50,7 @@ module.exports.putLike = (req, res) => {
         });
       }
     })
-    .catch((err) => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+    .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
 };
 
 module.exports.removeLike = (req, res) => {
@@ -68,5 +68,5 @@ module.exports.removeLike = (req, res) => {
         });
       }
     })
-    .catch((err) => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
+    .catch(() => res.status(500).send({ message: '«На сервере произошла ошибка»' }));
 };
