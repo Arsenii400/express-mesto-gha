@@ -1,96 +1,88 @@
 const validator = require('validator');
 const Card = require('../models/card');
-const {
-  serverErrorCode,
-  incorrectDataErrorCode,
-  notFoundIdErrorCode,
-} = require('../constants');
+const NotFoundError = require('../errors/not-found-error');
+const IncorrectIdError = require('../errors/incorrect-id-err');
 
-module.exports.findCards = (req, res) => {
+module.exports.findCards = (req, res, next) => {
   Card.find({})
-    .then((user) => res.send({ data: user }))
-    .catch(() => res.status(serverErrorCode).send({ message: '«На сервере произошла ошибка»' }));
+    .then((card) => res.send({ data: card }))
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((user) => res.send({ data: user }))
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(incorrectDataErrorCode).send({ message: '«Переданы некорректные данные при создании карточки' });
+        next(new IncorrectIdError('«Переданы некорректные данные при создании карточки»'));
       } else {
-        res.status(serverErrorCode).send({
-          message: '«На сервере произошла ошибка»',
-        });
+        next(err);
       }
     });
 };
 
-module.exports.deleteCardById = (req, res) => {
+module.exports.deleteCardById = (req, res, next) => {
   if (validator.isMongoId(req.params.cardId)) {
-    Card.findByIdAndRemove(req.params.cardId)
-      .then((user) => {
-        if (user) {
-          res.send({ data: user });
+    Card.findById(req.params.cardId)
+      .then((card) => {
+        const cardOwner = String(card.owner._id);
+        if (card) {
+          if (cardOwner === req.user._id) {
+            Card.findByIdAndRemove(req.params.cardId)
+              .then((card) => {
+                res.send({ data: card });
+              })
+              .catch(next);
+          } else {
+            next(new IncorrectIdError('«Вы не можете удалить карточку чужого пользователя»'));
+          }
         } else {
-          res.status(notFoundIdErrorCode).send({
-            message: '«Пользователь по указанному _id не найден»',
-          });
+          next(new NotFoundError('«Карточка по указанному _id не найдена»'));
         }
       })
-      .catch(() => res.status(serverErrorCode).send({ message: '«На сервере произошла ошибка»' }));
+      .catch(next);
   } else {
-    res.status(incorrectDataErrorCode).send({
-      message: 'Введён некорректный id',
-    });
+    next(new IncorrectIdError('«Введён некорректный id»'));
   }
 };
 
-module.exports.putLike = (req, res) => {
+module.exports.putLike = (req, res, next) => {
   if (validator.isMongoId(req.params.cardId)) {
     Card.findByIdAndUpdate(
       req.params.cardId,
       { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
       { new: true },
     )
-      .then((user) => {
-        if (user) {
-          res.send({ data: user });
+      .then((card) => {
+        if (card) {
+          res.send({ data: card });
         } else {
-          res.status(notFoundIdErrorCode).send({
-            message: '«Пользователь по указанному _id не найден»',
-          });
+          next(new NotFoundError('«Карточка по указанному _id не найдена»'));
         }
       })
-      .catch(() => res.status(serverErrorCode).send({ message: '«На сервере произошла ошибка»' }));
+      .catch(next);
   } else {
-    res.status(incorrectDataErrorCode).send({
-      message: 'Введён некорректный id',
-    });
+    next(new IncorrectIdError('«Введён некорректный id»'));
   }
 };
 
-module.exports.removeLike = (req, res) => {
+module.exports.removeLike = (req, res, next) => {
   if (validator.isMongoId(req.params.cardId)) {
     Card.findByIdAndUpdate(
       req.params.cardId,
       { $pull: { likes: req.user._id } }, // убрать _id из массива
       { new: true },
     )
-      .then((user) => {
-        if (user) {
-          res.send({ data: user });
+      .then((card) => {
+        if (card) {
+          res.send({ data: card });
         } else {
-          res.status(notFoundIdErrorCode).send({
-            message: '«Пользователь по указанному _id не найден»',
-          });
+          next(new NotFoundError('«Карточка по указанному _id не найдена»'));
         }
       })
-      .catch(() => res.status(serverErrorCode).send({ message: '«На сервере произошла ошибка»' }));
+      .catch(next);
   } else {
-    res.status(incorrectDataErrorCode).send({
-      message: 'Введён некорректный id',
-    });
+    next(new IncorrectIdError('«Введён некорректный id»'));
   }
 };
