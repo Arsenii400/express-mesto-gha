@@ -39,10 +39,10 @@ module.exports.deleteCardById = (req, res, next) => {
             next(new AlienCardError('«Вы не можете удалить карточку чужого пользователя»'));
           }
         } else {
-          next(new NotFoundError('«Карточка по указанному _id не найдена»'));
+          throw new NotFoundError('«Карточка по указанному _id не найдена»');
         }
       })
-      .catch(next);
+      .catch(() => next(new NotFoundError('«Карточка по указанному _id не найдена»')));
   } else {
     next(new IncorrectIdError('«Введён некорректный id»'));
   }
