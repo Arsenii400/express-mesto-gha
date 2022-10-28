@@ -19,7 +19,7 @@ module.exports.createUserValidation = celebrate({
     password: Joi.string().required(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().domain(),
   }).unknown(true),
 });
 
@@ -32,6 +32,6 @@ module.exports.updateUserValidation = celebrate({
 
 module.exports.updateAvatarValidation = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string(),
+    avatar: Joi.string().domain(),
   }),
 });
