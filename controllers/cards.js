@@ -2,6 +2,8 @@ const validator = require('validator');
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-error');
 const IncorrectIdError = require('../errors/incorrect-id-err');
+const AlienCardError = require('../errors/alien-card');
+
 
 module.exports.findCards = (req, res, next) => {
   Card.find({})
@@ -35,7 +37,7 @@ module.exports.deleteCardById = (req, res, next) => {
               })
               .catch(next);
           } else {
-            next(new IncorrectIdError('«Вы не можете удалить карточку чужого пользователя»'));
+            next(new AlienCardError('«Вы не можете удалить карточку чужого пользователя»'));
           }
         } else {
           next(new NotFoundError('«Карточка по указанному _id не найдена»'));
