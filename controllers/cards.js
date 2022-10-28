@@ -4,7 +4,6 @@ const NotFoundError = require('../errors/not-found-error');
 const IncorrectIdError = require('../errors/incorrect-id-err');
 const AlienCardError = require('../errors/alien-card');
 
-
 module.exports.findCards = (req, res, next) => {
   Card.find({})
     .then((card) => res.send({ data: card }))
