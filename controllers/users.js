@@ -17,6 +17,22 @@ module.exports.login = (req, res, next) => {
     .catch(next);
 };
 
+module.exports.findCurrentUser = (req, res, next) => {
+  if (validator.isMongoId(req.user._id)) {
+    User.findById(req.user._id)
+      .then((user) => {
+        if (user) {
+          res.send({ data: user });
+        } else {
+          throw new NotFoundError('«Пользователь по указанному _id не найден»');
+        }
+      })
+      .catch(next);
+  } else {
+    next(new IncorrectIdError('«Введён некорректный id»'));
+  }
+};
+
 module.exports.findUsers = (req, res, next) => {
   User.find({})
     .then((user) => res.send({ data: user }))
@@ -98,20 +114,4 @@ module.exports.updateAvatar = (req, res, next) => {
         next(err);
       }
     });
-};
-
-module.exports.findCurrentUser = (req, res, next) => {
-  if (validator.isMongoId(req.user._id)) {
-    User.findById(req.user._id)
-      .then((user) => {
-        if (user) {
-          res.send({ data: user });
-        } else {
-          throw new NotFoundError('«Пользователь по указанному _id не найден»');
-        }
-      })
-      .catch(next);
-  } else {
-    next(new IncorrectIdError('«Введён некорректный id»'));
-  }
 };
