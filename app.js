@@ -32,16 +32,14 @@ app.use('*', (req, res, next) => {
   next(new NotFoundError('«Запрашиваемый путь не найден»'));
 });
 app.use(errors());
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
-
+  // console.log(`Содержание ошибки: ${err}`);
   res.status(statusCode).send({
     message: statusCode === 500
       ? 'На сервере произошла ошибка'
-      : res
-        .status(statusCode)
-        .json({ message }),
+      : message,
   });
 });
 
-app.listen(PORT, () => { });
+app.listen(PORT);
