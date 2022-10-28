@@ -69,8 +69,7 @@ module.exports.createUser = (req, res, next) => {
         next(new IncorrectIdError('«Переданы некорректные данные при создании пользователя»'));
       } else if (err.code === 11000) {
         next(new EmailError('«Такой email уже зарегистрирован»'));
-      }
-      else {
+      } else {
         next(err);
       }
     });
