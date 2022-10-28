@@ -38,8 +38,10 @@ app.use((err, req, res) => {
   res.status(statusCode).send({
     message: statusCode === 500
       ? 'На сервере произошла ошибка'
-      : message,
+      : res
+        .status(statusCode)
+        .json({ message }),
   });
 });
 
-app.listen(PORT, () => {});
+app.listen(PORT, () => { });
