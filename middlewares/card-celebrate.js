@@ -3,7 +3,7 @@ const { celebrate, Joi } = require('celebrate');
 module.exports.createCardValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().domain(),
+    link: Joi.string().required(),
   }),
 });
 

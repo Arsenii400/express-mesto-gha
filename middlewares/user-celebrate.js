@@ -1,4 +1,12 @@
 const { celebrate, Joi } = require('celebrate');
+const validator = require('validator');
+
+const method = (value, helper) => {
+  const result = validator.isURL(value);
+  if (!result) {
+    return helper.message('аватар должен быть валидным url');
+  } return value;
+};
 
 module.exports.loginValidation = celebrate({
   body: Joi.object().keys({
@@ -19,7 +27,7 @@ module.exports.createUserValidation = celebrate({
     password: Joi.string().required(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().domain(),
+    avatar: Joi.string().custom(method),
   }).unknown(true),
 });
 
@@ -32,6 +40,6 @@ module.exports.updateUserValidation = celebrate({
 
 module.exports.updateAvatarValidation = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().domain(),
+    avatar: Joi.string().custom(method),
   }),
 });
