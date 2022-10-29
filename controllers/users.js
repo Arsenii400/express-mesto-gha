@@ -1,4 +1,3 @@
-const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -18,19 +17,20 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.findCurrentUser = (req, res, next) => {
-  if (validator.isMongoId(req.user._id)) {
-    User.findById(req.user._id)
-      .then((user) => {
-        if (user) {
-          res.send({ data: user });
-        } else {
-          throw new NotFoundError('«Пользователь по указанному _id не найден»');
-        }
-      })
-      .catch(next);
-  } else {
-    next(new IncorrectIdError('«Введён некорректный id»'));
-  }
+  User.findById(req.user._id)
+    .then((user) => {
+      if (user) {
+        res.send({ data: user });
+      } else {
+        throw new NotFoundError('«Пользователь по указанному _id не найден»');
+      }
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new IncorrectIdError('«Введён некорректный id»'));
+      }
+      return next(err);
+    });
 };
 
 module.exports.findUsers = (req, res, next) => {
@@ -40,19 +40,20 @@ module.exports.findUsers = (req, res, next) => {
 };
 
 module.exports.findUserById = (req, res, next) => {
-  if (validator.isMongoId(req.params.userId)) {
-    User.findById(req.params.userId)
-      .then((user) => {
-        if (user) {
-          res.send({ data: user });
-        } else {
-          throw new NotFoundError('«Пользователь по указанному _id не найден»');
-        }
-      })
-      .catch(next);
-  } else {
-    next(new IncorrectIdError('«Введён некорректный id»'));
-  }
+  User.findById(req.params.userId)
+    .then((user) => {
+      if (user) {
+        res.send({ data: user });
+      } else {
+        throw new NotFoundError('«Пользователь по указанному _id не найден»');
+      }
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new IncorrectIdError('«Введён некорректный id»'));
+      }
+      return next(err);
+    });
 };
 
 module.exports.createUser = (req, res, next) => {
