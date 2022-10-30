@@ -8,6 +8,7 @@ const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-error');
 const { loginValidation, createUserValidation } = require('./middlewares/user-celebrate');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 
@@ -17,6 +18,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(requestLogger);
 
 app.post('/signin', loginValidation, login);
 app.post('/signup', createUserValidation, createUser);
@@ -28,6 +31,8 @@ app.use('/cards', card);
 app.use('*', (req, res, next) => {
   next(new NotFoundError('«Запрашиваемый путь не найден»'));
 });
+
+app.use(errorLogger);
 app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
